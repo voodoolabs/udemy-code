@@ -6,7 +6,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
-
+from key import api_key
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -14,39 +14,43 @@ app = dash.Dash()
 
 app.layout = html.Div([
     html.Link(
-            rel='stylesheet',
-            href='https://codepen.io/chriddyp/pen/bWLwgP.css'
-        ),
-    dcc.Input(id='input-box', value='', type='text', placeholder='Enter a Stock symbol', ),
+        rel='stylesheet',
+        href='https://codepen.io/chriddyp/pen/bWLwgP.css'
+    ),
+    dcc.Input(id='input-box', value='', type='text',
+              placeholder='Enter a Stock symbol', ),
     html.Button('Submit', id='button'),
     html.Div(),
     html.P('5 Calls Per Min'),
     dcc.Graph(
-        id='candle-graph', animate=True, style={"backgroundColor": "#1a2d46", 'color':'#ffffff'},),
+        id='candle-graph', animate=True, style={"backgroundColor": "#1a2d46", 'color': '#ffffff'},),
     html.Div([
-            html.P('Developed by: ', style={'display': 'inline', 'color' : 'white'}),
-            html.A('Austin Kiese', href='http://www.austinkiese.com'),
-            html.P(' - ', style={'display': 'inline', 'color' : 'white'}),
-            html.A('cryptopotluck@gmail.com', href='mailto:cryptopotluck@gmail.com')
-        ], className="twelve columns",
-            style={'fontSize': 18, 'padding-top': 20}
+        html.P('Developed by: ', style={
+               'display': 'inline', 'color': 'white'}),
+        html.A('Austin Kiese', href='http://www.austinkiese.com'),
+        html.P(' - ', style={'display': 'inline', 'color': 'white'}),
+        html.A('cryptopotluck@gmail.com', href='mailto:cryptopotluck@gmail.com')
+    ], className="twelve columns",
+        style={'fontSize': 18, 'padding-top': 20}
 
-        )
+    )
 ])
 
-api_key = ''
 period = 60
 ts = TimeSeries(key=api_key, output_format='pandas')
 ti = TechIndicators(key=api_key, output_format='pandas')
+
 
 @app.callback(Output('candle-graph', 'figure'),
               [Input('button', 'n_clicks')],
               [State('input-box', 'value')])
 def update_layout(n_clicks, input_value):
 
-    #Getting Dataframes Ready
-    data_ts = ts.get_intraday(symbol=input_value.upper(), interval='1min', outputsize='full')
-    data_ti, meta_data_ti = ti.get_rsi(symbol=input_value.upper(), interval='1min', time_period=period, series_type='close')
+    # Getting Dataframes Ready
+    data_ts = ts.get_intraday(
+        symbol=input_value.upper(), interval='1min', outputsize='full')
+    data_ti, meta_data_ti = ti.get_rsi(symbol=input_value.upper(
+    ), interval='1min', time_period=period, series_type='close')
 
     df = data_ts[0][period::]
 
@@ -56,7 +60,7 @@ def update_layout(n_clicks, input_value):
 
     total_df = pd.concat([df, df2], axis=1, sort=True)
 
-    #Breaking Down Datafames
+    # Breaking Down Datafames
 
     opens = []
     for o in total_df['1. open']:
@@ -79,7 +83,7 @@ def update_layout(n_clicks, input_value):
     for r, l in zip(total_df['RSI'], low):
         rsi_offset.append(l-(l / r))
 
-    #SELL SCATTER
+    # SELL SCATTER
     high_rsi_value = []
     high_rsi_time = []
 
@@ -88,7 +92,7 @@ def update_layout(n_clicks, input_value):
             high_rsi_value.append(l-(l/value))
             high_rsi_time.append(time)
 
-    #BUY SCATTER
+    # BUY SCATTER
     low_rsi_value = []
     low_rsi_time = []
 
@@ -96,7 +100,6 @@ def update_layout(n_clicks, input_value):
         if value < 35:
             low_rsi_value.append(l - (l / value))
             low_rsi_time.append(time)
-
 
     scatter = go.Scatter(
         x=high_rsi_time,
@@ -141,5 +144,3 @@ def update_layout(n_clicks, input_value):
 
 if __name__ == '__main__':
     app.run_server(port=8085)
-
-

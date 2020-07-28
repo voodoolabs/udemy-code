@@ -2,7 +2,7 @@ from binance.client import Client
 import plotly.offline as pyo
 import plotly.graph_objs as go
 import pandas as pd
-from plotly_graphs.binance_api_keys import APIKey, SecretKey
+from binance_api_keys import APIKey, SecretKey
 
 client = Client(api_key=APIKey, api_secret=SecretKey)
 pd.set_option('float_format', '{:f}'.format)
@@ -59,9 +59,11 @@ def compare_BTC_equivalent_and_binance_balance():
 
     filtered_df = btc_symbol.join(binance_ballance)
     filtered_df = filtered_df.dropna()
-    filtered_df[['price', 'free']] = filtered_df[['price', 'free']].astype(float)
+    filtered_df[['price', 'free']] = filtered_df[[
+        'price', 'free']].astype(float)
     filtered_df['btc_value'] = filtered_df['price'] * filtered_df['free']
-    filtered_df['usd_value'] = filtered_df['btc_value'].multiply(float(btc_value))
+    filtered_df['usd_value'] = filtered_df['btc_value'].multiply(
+        float(btc_value))
     filtered_df = filtered_df[filtered_df.usd_value > 3.00]
     return filtered_df
 
@@ -81,7 +83,8 @@ labels = []
 for name in df.index.unique():
     labels.append(str(name))
 
-trace = go.Pie(labels=labels, values=values, domain={'x': [0, .48]}, hoverinfo='label+value', hole=0.4)
+trace = go.Pie(labels=labels, values=values, domain={
+               'x': [0, .48]}, hoverinfo='label+value', hole=0.4)
 
 layout = go.Layout(
     title='Binance: Total Asset Breakdown',
@@ -104,4 +107,3 @@ data = [trace]
 fig = go.Figure(data=data, layout=layout)
 
 pyo.plot(fig)
-
