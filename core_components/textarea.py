@@ -11,13 +11,16 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Use the following function when accessing the value of 'my-slider'
 # in callbacks to transform the output value to logarithmic
+
+
 def transform_value(value):
     return 10 ** value
 
 
 app.layout = html.Div([
     html.H1('Common Words Graph'),
-    dcc.Graph(id='txt-graph', animate=True, style={"backgroundColor": "#1a2d46", 'color': '#ffffff'}),
+    dcc.Graph(id='txt-graph', animate=True,
+              style={"backgroundColor": "#1a2d46", 'color': '#ffffff'}),
     dcc.Textarea(
         id='txt',
         placeholder='Common Words...',
@@ -29,14 +32,13 @@ app.layout = html.Div([
 
 
 @app.callback(
-               Output('txt-graph', 'figure')
-               ,
-              [Input('txt', 'value')])
+    Output('txt-graph', 'figure'),
+    [Input('txt', 'value')])
 def display_value(value):
 
     word_list = value.split()
 
-    word_dic=Counter(word_list)
+    word_dic = Counter(word_list)
     x = list(word_dic.keys())
     y = list(word_dic.values())
 

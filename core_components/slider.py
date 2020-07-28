@@ -14,10 +14,10 @@ app.layout = html.Div([
     dcc.Graph(id='slider-graph', animate=True, style={"backgroundColor": "#1a2d46", 'color': '#ffffff'}),
     dcc.Slider(
         id='slider-updatemode',
-        marks={i: '{}'.format(i) for i in range(20)},
-        max=20,
-        value=2,
-        step=1,
+        marks={i: '{}'.format(i) for i in range(1000)},
+        max=1000,
+        value=40,
+        step=10,
         updatemode='drag',
     ),
     html.Div(id='updatemode-output-container', style={'margin-top': 20})
