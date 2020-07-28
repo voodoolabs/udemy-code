@@ -41,7 +41,7 @@ def parse_contents(contents, filename, date):
 
         # HTML images accept base64 encoded strings in the same format
         # that is supplied by the upload
-        html.Img(src=contents, style={'width': '500px', 'height':'400px'}),
+        html.Img(src=contents, style={'width': 'auto', 'height':'400px'}),
         html.Hr(),
         html.Div('Raw Content'),
         html.Pre(contents[0:200] + '...', style={
